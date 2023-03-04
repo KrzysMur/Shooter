@@ -1,7 +1,7 @@
 from shooter import *
 
 def main():
-    vid_source_init(0)
+    vid_source_init(cam_n)
     while True:
         output = frame_process()
         circle = search_circle(output, min, max)
