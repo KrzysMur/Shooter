@@ -1,7 +1,7 @@
 from shooter import *
 
 def main():
-    vid_source_init(cam_n)
+    vid_source_init(0)
     while True:
         output = frame_process()
         circle = search_circle(output, min, max)
@@ -10,7 +10,7 @@ def main():
             shot.get_dist()
             shot.calc_val()
             shot.print_shot_stats()
-        #draw_circle(circle, output)
+        draw_circle(circle, output)
         cv.imshow("Kamerka", output)
 
 if __name__ == "__main__":

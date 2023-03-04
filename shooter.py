@@ -17,9 +17,14 @@ class Shot:
     def calc_val(self):
         ppmm = self.circle[2]/26.5
         dist_abs = self.dist / ppmm
-        dist_from_ex = ex_target_diam - dist_abs + caliber / 2
-        self.score = round((dist_from_ex / tenth + 10) / 10 - 10, 1)
-        if self.score < 1:
+        dist_from_ex = cal_ex_target_diam - dist_abs
+        if dist_abs <= cal_ten_x_diam/2:
+            self.score = round(((cal_ten_x_diam/2 - dist_abs) / inner_tenth) / 10 + 10.4, 1)
+        elif dist_abs <= cal_ten_diam/2:
+            self.score = round(((cal_ten_diam/2 - dist_abs) / outer_tenth) / 10 + 10, 1)
+        elif dist_abs <= cal_ex_target_diam/2:
+            self.score = round((dist_from_ex / tenth + 10) / 10 - 10, 1)
+        else:
             self.score = 0
 
     def print_shot_stats(self):
@@ -59,6 +64,5 @@ def shot_listener(circle):
     if cv.waitKey(1) == ord('s') and circle is not None:
         return True
     return False
-
 
 

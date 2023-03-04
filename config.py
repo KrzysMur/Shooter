@@ -11,6 +11,12 @@ cam_n = config.getint("10m_target","cam")
 min = config.getint("10m_target","min")
 max = config.getint("10m_target","max")
 blur = config.getint("10m_target","blur")
-tenth = round((ex_target_diam / 2 - ten_diam / 2) / 89, 2)   #mm per 0.1
 
-ring_diam = tenth * 10
+
+cal_ex_target_diam = ex_target_diam + caliber
+cal_ten_diam = ten_diam + caliber
+cal_ten_x_diam = ten_x_diam + caliber
+
+inner_tenth = cal_ten_x_diam / 10
+outer_tenth = (cal_ten_diam - cal_ten_x_diam) / 10
+tenth = round((ex_target_diam / 2 - ten_diam / 2) / 89, 2)   #mm per 0.1
