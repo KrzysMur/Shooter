@@ -1,6 +1,7 @@
 import cv2 as cv
 import numpy as np
 import math
+import json
 from datetime import datetime
 from config import *
 
@@ -11,8 +12,8 @@ class Shot:
         self.shot_num = None
         self.circle = [int(x) for x in circle]
         self.inner_flag = ""
-        self.score = None
-        self.no_decimal_score = None
+        self.score = 0
+        self.no_decimal_score = 0
 
     def get_dist(self):
         self.dist = int(math.sqrt((screen_center[0] - self.circle[0])**2 + (screen_center[1] - self.circle[1])**2))
@@ -45,6 +46,8 @@ class Session:
         self.num_of_inners = 0
         self.score = 0
         self.no_decimal_score = 0
+        self.shot_list = []
+        
 
     def new_shot(self, circle, shot_num):
         shot = Shot(circle)
@@ -57,6 +60,7 @@ class Session:
         self.no_decimal_score += shot.no_decimal_score
         if shot.inner_flag == "X":
             self.num_of_inners += 1
+        self.shot_list.append({"Lp": shot.shot_num, "value": shot.score, "inner_flag": shot.inner_flag})
 
     def session(self):
         shot_num = 1
@@ -80,6 +84,26 @@ class Session:
             Average shot: {round(self.score / self.num_of_shots, 1)}
               """)
 
+    def ask_if_save(self):
+        save_ses = input("Do you want to save this session? (Y/n)>>> ").lower()
+        match save_ses:
+            case "y":
+                self.save_session()
+            case "n":
+                print("Session discarted...")
+            case _:
+                self.ask_if_save()
+
+    def save_session(self):
+        file_name = input("Enter session name >>> ")
+        self.shot_list_json = json.dumps(self.shot_list)
+        with open(f"session_data/{file_name}.json", "w") as file:
+            try:
+                file.write(self.shot_list_json)
+            except Exception:
+                print("Can't save this session")
+            else:
+                print("Session saved successfully")
 
 class Command:
     def __init__(self, command):
@@ -93,6 +117,7 @@ class Command:
                     session = Session(int(self.cmd[1]))
                     session.session()
                     session.print_session_stats()
+                    session.ask_if_save()
                 case "help":
                     print("- 's 10' - s command starts a new session. The number represents the amount of shots in this session")
                 case _:
@@ -100,6 +125,8 @@ class Command:
         except Exception as e:
             print("Can't execute this command", e)
 
+
+    
 
 def vid_source_init(cam):
     print("Initializing the camera")
